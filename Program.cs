@@ -91,7 +91,7 @@ app.MapPost("/api/messages", (PocsagMessageInput input, HttpRequest request) =>
 
     messages.Enqueue(message);
 
-    while (messages.Count > 1000 && messages.TryDequeue(out _))
+    while (messages.Count > 3500 && messages.TryDequeue(out _))
     {
     }
 
