@@ -61,7 +61,7 @@ app.MapGet("/prorail", () => Results.Content(Pages.MessagesHtml("ProRail Melding
 
 app.MapGet("/api/messages", () =>
 {
-    return Results.Ok(messages.Reverse().Take(50));
+    return Results.Ok(messages.Reverse().Take(1000));
 }).RequireAuthorization();
 
 app.MapGet("/api/messages/prorail", () =>
@@ -69,7 +69,7 @@ app.MapGet("/api/messages/prorail", () =>
     var prorailMessages = messages
         .Reverse()
         .Where(message => message.Text.Contains("icb", StringComparison.OrdinalIgnoreCase))
-        .Take(50);
+        .Take(1000);
 
     return Results.Ok(prorailMessages);
 }).RequireAuthorization();
