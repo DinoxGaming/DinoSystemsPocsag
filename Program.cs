@@ -65,15 +65,33 @@ internal static class Pages
       <title>POCSAG Meldingen</title>
       <style>
         body { margin: 0; font-family: Segoe UI, Arial, sans-serif; background: #f4f6f8; color: #17202a; }
-        header { padding: 20px 28px; background: #122033; color: white; }
-        h1 { margin: 0; font-size: 24px; font-weight: 650; }
-        main { padding: 22px 28px; }
+        header { padding: 18px 24px; background: #122033; color: white; }
+        h1 { margin: 0; font-size: 22px; font-weight: 650; }
+        main { padding: 18px 24px; }
         table { width: 100%; border-collapse: collapse; background: white; border: 1px solid #d9e0e8; }
-        th, td { padding: 10px 12px; border-bottom: 1px solid #e5eaf0; text-align: left; vertical-align: top; }
+        th, td { padding: 11px 12px; border-bottom: 1px solid #e5eaf0; text-align: left; vertical-align: top; }
         th { font-size: 13px; color: #526070; background: #f9fafb; }
-        td { font-size: 14px; }
+        td { font-size: 15px; }
+        .time { width: 72px; white-space: nowrap; color: #526070; font-variant-numeric: tabular-nums; }
+        .address { width: 105px; white-space: nowrap; font-weight: 650; font-variant-numeric: tabular-nums; }
         .muted { color: #526070; }
         .text { white-space: pre-wrap; word-break: break-word; }
+        @media (max-width: 640px) {
+          header { padding: 15px 16px; }
+          h1 { font-size: 20px; }
+          main { padding: 12px; }
+          table, tbody, tr, td { display: block; width: 100%; box-sizing: border-box; }
+          table { border: 0; background: transparent; }
+          thead { display: none; }
+          tr { margin: 0 0 10px; border: 1px solid #d9e0e8; background: white; }
+          td { border-bottom: 0; padding: 6px 10px; }
+          td:first-child { padding-top: 10px; }
+          td:last-child { padding-bottom: 11px; }
+          .time, .address { display: inline-block; width: auto; }
+          .time { margin-right: 10px; font-size: 13px; }
+          .address { font-size: 13px; }
+          .text { margin-top: 4px; font-size: 16px; line-height: 1.35; }
+        }
       </style>
     </head>
     <body>
@@ -86,14 +104,11 @@ internal static class Pages
             <tr>
               <th>Tijd</th>
               <th>Capcode</th>
-              <th>Functie</th>
-              <th>Baud</th>
-              <th>Type</th>
               <th>Bericht</th>
             </tr>
           </thead>
           <tbody id="rows">
-            <tr><td colspan="6" class="muted">Laden...</td></tr>
+            <tr><td colspan="3" class="muted">Laden...</td></tr>
           </tbody>
         </table>
       </main>
@@ -105,19 +120,19 @@ internal static class Pages
           const messages = await response.json();
 
           if (!messages.length) {
-            rows.innerHTML = '<tr><td colspan="6" class="muted">Nog geen meldingen ontvangen.</td></tr>';
+            rows.innerHTML = '<tr><td colspan="3" class="muted">Nog geen meldingen ontvangen.</td></tr>';
             return;
           }
 
           rows.innerHTML = messages.map(message => {
-            const receivedAt = new Date(message.receivedAt).toLocaleString('nl-NL');
+            const receivedAt = new Date(message.receivedAt).toLocaleTimeString('nl-NL', {
+              hour: '2-digit',
+              minute: '2-digit'
+            });
             const address = String(message.address).padStart(7, '0');
             return `<tr>
-              <td>${escapeHtml(receivedAt)}</td>
-              <td>${escapeHtml(address)}</td>
-              <td>${escapeHtml(message.function)}</td>
-              <td>${escapeHtml(message.baudRate)}</td>
-              <td>${escapeHtml(message.type)}</td>
+              <td class="time">${escapeHtml(receivedAt)}</td>
+              <td class="address">${escapeHtml(address)}</td>
               <td class="text">${escapeHtml(message.text)}</td>
             </tr>`;
           }).join('');
